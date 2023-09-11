@@ -1,55 +1,84 @@
-# # The basic idea behind generators is that they add a basic functionality
-# # to a function without coding that functionality into the function
-# # directly.
+# # # The basic idea behind generators is that they add a basic functionality
+# # # to a function without coding that functionality into the function
+# # # directly.
 
-# # this is used to decorate other functions
-# def mydecorator(function):
+# # # this is used to decorate other functions
+# # def mydecorator(function):
 
-#     # this is the wrapper function
+# #     # this is the wrapper function
+# #     def wrapper(*args, **kwargs):
+# #         print("I have decorated your function!")
+# #         return_value =  function(*args, **kwargs)   # the function we are trying to decorate
+# #         return return_value
+
+# #     # we are actually returning another function that
+# #     # executes the initial function but with decoration.
+# #     return wrapper
+
+
+# # # this decorator will take this function as an argument.
+# # @mydecorator
+# # def hello(person):
+# #     return f'Hello {person}!'
+
+# # # calling the returned wrapper function
+# # # this is not actually the way we do it in python
+# # # mydecorator(hello_world)()
+
+
+# # print(hello('Faisal'))
+
+
+# # First Practical Example
+# def logged(function):
+
 #     def wrapper(*args, **kwargs):
-#         print("I have decorated your function!")
-#         return_value =  function(*args, **kwargs)   # the function we are trying to decorate
-#         return return_value
+#         # get the return value of the function
+#         value = function(*args, **kwargs)
+#         # open a logfile in append mode
+#         with open('logfile.txt', 'a+') as f:
+#             # so this is how to get a functions name.
+#             fname = function.__name__
+#             # write to the logfile
+#             print(f'{fname} returned value {value}')
+#             f.write(f'{fname} returned value {value}\n')
+#         return value
 
-#     # we are actually returning another function that
-#     # executes the initial function but with decoration.
 #     return wrapper
 
+# @logged
+# def add(x, y):
+#     return x + y
 
-# # this decorator will take this function as an argument.
-# @mydecorator
-# def hello(person):
-#     return f'Hello {person}!'
+# # print(add(10, 20))
 
-# # calling the returned wrapper function
-# # this is not actually the way we do it in python
-# # mydecorator(hello_world)()
+# 2nd practical example
 
-
-# print(hello('Faisal'))
+import time
 
 
-
-# First Practical Example
-def logged(function):
+def timed(function):
 
     def wrapper(*args, **kwargs):
-        # get the return value of the function
-        value = function(*args, **kwargs)
-        # open a logfile in append mode
-        with open('logfile.txt', 'a+') as f:
-            # so this is how to get a functions name.
-            fname = function.__name__
-            # write to the logfile
-            print(f'{fname} returned value {value}')
-            f.write(f'{fname} returned value {value}\n')
+        before = time.time()  # current time
+        value = function(*args, **kwargs)  # function being decorated
+        after = time.time()  # current timestamp
+        # calculate the difference in time
+        fname = function.__name__  # function name
+        difference = after - before
+        print(f'{fname} took seconds {difference} to execute!')
         return value
-    
+
     return wrapper
 
-@logged
-def add(x, y):
-    return x + y
 
-# print(add(10, 20))
+@timed
+def myfunction(x):
+    result = 1
+    for i in range(1, x):
+        result *= i
 
+    return result
+
+
+myfunction(9000)
